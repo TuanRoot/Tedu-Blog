@@ -21,6 +21,4 @@ namespace TeduBlog.Core.Models
         //    Items = items ?? new List<T>();
         //}
     }
-    {
-    }
 }

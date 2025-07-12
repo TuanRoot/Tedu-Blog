@@ -65,27 +65,27 @@ namespace TeduBlog.Data
         //    }
         //    return base.SaveChangesAsync(cancellationToken);
         //}
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, 
-            CancellationToken cancellationToken = default)
-        {
-            var now = DateTime.UtcNow;  // dùng UTC để tránh lệch múi giờ
+        //public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, 
+        //    CancellationToken cancellationToken = default)
+        //{
+        //    var now = DateTime.UtcNow;  // dùng UTC để tránh lệch múi giờ
 
-            foreach (var entry in ChangeTracker.Entries<IAuditable>())
-            {
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Entity.DateCreated = now;
-                    entry.Entity.DateModified = now;
-                }
-                else if (entry.State == EntityState.Modified)
-                {
-                    // Chỉ cập nhật ModifiedDate
-                    entry.Entity.DateModified = now;
-                }
-            }
+        //    foreach (var entry in ChangeTracker.Entries<IAuditable>())
+        //    {
+        //        if (entry.State == EntityState.Added)
+        //        {//}
+        //            entry.Entity.DateCreated = now;
+        //            entry.Entity.DateModified = now;
+        //        }
+        //        else if (entry.State == EntityState.Modified)
+        //        {
+        //            // Chỉ cập nhật ModifiedDate
+        //            entry.Entity.DateModified = now;
+        //        }
+        //    }
 
-            return await base.SaveChangesAsync(
-                acceptAllChangesOnSuccess, cancellationToken);
-        }
+        //    return await base.SaveChangesAsync(
+        //        acceptAllChangesOnSuccess, cancellationToken);
+        
     }
 }

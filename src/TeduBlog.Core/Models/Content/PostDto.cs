@@ -7,7 +7,7 @@ using TeduBlog.Core.Domain.Content;
 
 namespace TeduBlog.Core.Models.Content
 {
-    internal class PostDto : PostInListDto
+    public class PostDto : PostInListDto
     {
         public Guid CategoryId { get; set; }
 
