@@ -38,7 +38,7 @@ namespace TeduBlog.Api.Controllers.AdminAPI
         public async Task<ActionResult<AuthenticatedResult>> Login([FromBody] LoginRequest request)
         {
             //Authenticate the user
-            if (request == null)    
+            if (request == null)
             {
                 return BadRequest("Invalid login request.");
             }
@@ -91,7 +91,7 @@ namespace TeduBlog.Api.Controllers.AdminAPI
 
             var allPermissions = new List<RoleClaimsDto>();
 
-            if (roles.Contains(Roles.Admin))
+            if (roles.Contains(Role.Admin))
             {
                 var types = typeof(Permissions).GetTypeInfo().DeclaredNestedTypes;
                 foreach (var type in types)
@@ -112,5 +112,53 @@ namespace TeduBlog.Api.Controllers.AdminAPI
             }
             return permissions.Distinct().ToList();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<AuthenticatedResult>> Login([FromBody] LoginRequest request)
+        {
+            //authenticate the user
+            if (request == null)
+            {
+                return BadRequest("Invalid login request.");
+            }
+
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user == null || user.IsActive == false || user.LockoutEnabled)
+            {
+                return Unauthorized("Invalid username or password, or user is inactive/locked.");
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, true);
+            if (!result.Succeeded)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+            //authorization
+            var roles = await _userManager.GetRolesAsync(user);
+            var permissions = await this.GetPermissionsByUserIdAsync(user.Id.ToString());
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(UserClaims.Id, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(UserClaims.FirstName, user.FirstName),
+                new Claim(UserClaims.Roles, string.Join(";", roles)),
+                new Claim(UserClaims.Permissions, JsonSerializer.Serialize(permissions)),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            var accessToken = _tokenService.GenerateAccessToken(claims);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(30);
+            await _userManager.UpdateAsync(user);
+            return Ok(new AuthenticatedResult() 
+            {
+                Token = accessToken,
+                RefreshToken = refreshToken
+            });
+        }
+
     }
 }

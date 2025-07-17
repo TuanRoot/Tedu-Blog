@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TeduBlog.Core.SeedWorks.Constants
 {
-    public class Roles
+    public class Role
     {
         public static string Admin => "Admin";
     }

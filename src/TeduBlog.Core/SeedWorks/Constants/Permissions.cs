@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TeduBlog.Core.SeedWorks.Constants
 {
-    public class Permissions
+    public static class Permissions
     {
         public static class Dashboard
         {

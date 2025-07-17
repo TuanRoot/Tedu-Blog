@@ -9,8 +9,6 @@ namespace TeduBlog.Core.ConfigOptions
     public class SystemConfig
     {
         public string AppName { get; set; }
-        public string SiteUrl { get; set; }
-        public string SiteDescription { get; set; }
-        public string AdminEmail { get; set; }
+        public string AppSlogan { get; set; }
     }
 }

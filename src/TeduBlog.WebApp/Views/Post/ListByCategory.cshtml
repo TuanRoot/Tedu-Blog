@@ -1,9 +1,10 @@
-﻿
+﻿@model PostListByCategoryViewModel
+@inject IOptions<SystemConfig> _config;
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = Model.Category.Name + "-"  + _config.Value.AppName;
+    ViewData["Description"] = Model.Category.SeoDescription + "-" + _config.Value.AppName;
 }
 @inject IOptions<SystemConfig> _config;
-@model HomeViewModel
 <!-- Page Header-->
 <!-- Page Header-->
 <header class="masthead" style="background-image: url('/assets/img/home-bg.jpg')">
@@ -11,8 +12,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>@_config.Value.AppName</h1>
-                    <span class="subheading">@_config.Value.AppSlogan</span>
+                    <h1>@Model.Category.Name</h1>
+                    <span class="subheading">@Model.Category.SeoDescription</span>
                 </div>
             </div>
         </div>
@@ -22,7 +23,7 @@
 <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
         <div class="col-md-10 col-lg-8 col-xl-7">
-            @foreach(var item in Model.LatestPosts)
+            @foreach(var item in Model.Posts.Results)
             {
                 <!-- Post preview-->
                 <div class="post-preview">
